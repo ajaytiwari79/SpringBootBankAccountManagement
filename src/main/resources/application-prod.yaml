@@ -1,0 +1,33 @@
+#---------ApplicationPortNo
+server:
+  port: 7979
+  servlet:
+    context-path: /bankx
+#---------ApplicationName
+spring:
+  application:
+    name: BankX
+
+#---------Database Configuration
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bankx
+    username: root
+    password:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+
+#---------Swagger Configuration
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+#---------intrestRate
+interestRate: 0.5
+
+#----------defaultBalanceForSavingsAccount
+defaultBalanceForSavingsAccount: 500
