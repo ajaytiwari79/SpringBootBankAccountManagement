@@ -3,12 +3,14 @@ package com.bankx.services.accountService;
 import com.bankx.dtos.accountDtos.AccountBalance;
 import com.bankx.dtos.accountDtos.CreditBalance;
 import com.bankx.dtos.accountDtos.TransferAmount;
+import com.bankx.dtos.transactionsDtos.TransactionDTO;
 import com.bankx.models.account.Account;
 import com.bankx.models.account.AccountType;
 import com.bankx.models.customer.Customer;
 import com.bankx.models.exception.NotValidException;
 import com.bankx.models.notification.Notification;
 import com.bankx.models.transactions.Transaction;
+import com.bankx.models.transactions.TransactionType;
 import com.bankx.repositories.accountRepositry.AccountRepository;
 import com.bankx.repositories.notificationRepository.NotificationRepository;
 import com.bankx.repositories.transactionsRepository.TransactionRepository;
@@ -25,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
     private static final Logger LOGGER = LogManager.getLogger(String.valueOf(AccountServiceImpl.class));
 
     @Autowired
@@ -46,31 +48,39 @@ public class AccountServiceImpl implements AccountService{
     @Value("${interestRate}")
     private double interestRate;
 
-    public AccountServiceImpl(AccountRepository accountRepository,AccountBalanceService accountBalanceService) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountBalanceService accountBalanceService) {
         this.accountRepository = accountRepository;
         this.accountBalanceService = accountBalanceService;
     }
 
     public List<AccountBalance> checkBalance(int c_id) {
-        List<AccountBalance> checkBalanceList =  accountRepository.getAccountBalance(c_id,true);
+        List<AccountBalance> checkBalanceList = accountRepository.getAccountBalance(c_id, true);
         return checkBalanceList;
     }
 
-    public double addBalanceToSavingsAccount(CreditBalance creditBalance, String bankName) {
-        Account account = accountRepository.getSavingsAccountBalanceByUser(creditBalance.getC_id(),true , AccountType.SAVINGS);
-        double currentBalance = account.getBalance()+creditBalance.getBalance();
-        double interest = (currentBalance * interestRate)/100;
-        boolean isBalanceCredit = accountBalanceService.creditBalanceToAccount(account, (creditBalance.getBalance() + interestRate));
-        if(isBalanceCredit) {
-            transactionService.createTransaction(Transaction.builder().toUser(account.getCustomer()).creditSuccess(true).bankName(bankName).build());
+    public TransactionDTO addBalanceToSavingsAccount(CreditBalance creditBalance, String bankName) {
+        Account account = accountRepository.getSavingsAccountBalanceByUser(creditBalance.getC_id(), true, AccountType.SAVINGS);
+        double currentBalance = account.getBalance() + creditBalance.getBalance();
+        double interest = (currentBalance * interestRate) / 100;
+        boolean isBalanceCredit = accountBalanceService.creditBalanceToAccount(account, (creditBalance.getBalance() + interest));
+        TransactionDTO transactionDTO = null;
+        if (isBalanceCredit) {
+            Transaction transaction = transactionService.createTransaction(Transaction.builder().amount(creditBalance.getBalance()).toUser(account.getCustomer()).creditSuccess(true).bankName(bankName).transactionType(TransactionType.DEBIT).build());
+            transactionDTO = TransactionDTO.builder().amount(transaction.getAmount()).creditSuccess(transaction.isCreditSuccess()).debitSuccess(transaction.isDebitSuccess()).transactionType(transaction.getTransactionType()).toUser(transaction.getToUser().getUsername()).build();
         }
-        return currentBalance+interest;
+        return transactionDTO;
     }
 
-    public boolean getBalance(CreditBalance creditBalance, String bankz){
-        Account account = accountRepository.getSavingsAccountBalanceByUser(creditBalance.getC_id(),true , AccountType.CURRENT);
-        double balance = creditBalance.getBalance() + (creditBalance.getBalance()*interestRate) * .001;
-        return accountBalanceService.debitBalanceFromAccount(account , balance );
+    public TransactionDTO getBalance(CreditBalance creditBalance, String bankName) {
+        Account account = accountRepository.getSavingsAccountBalanceByUser(creditBalance.getC_id(), true, AccountType.CURRENT);
+        double balance = creditBalance.getBalance() + (creditBalance.getBalance() * interestRate) * .001;
+        boolean isBalanceDebit = accountBalanceService.debitBalanceFromAccount(account, balance);
+        TransactionDTO transactionDTO=null;
+        if (isBalanceDebit) {
+            Transaction transaction = transactionService.createTransaction(Transaction.builder().amount(creditBalance.getBalance()).toUser(account.getCustomer()).creditSuccess(true).bankName(bankName).transactionType(TransactionType.CREDIT).build());
+            transactionDTO = TransactionDTO.builder().amount(transaction.getAmount()).creditSuccess(transaction.isCreditSuccess()).debitSuccess(transaction.isDebitSuccess()).transactionType(transaction.getTransactionType()).toUser(transaction.getToUser().getUsername()).build();
+        }
+        return transactionDTO;
     }
 
     @Transactional
@@ -85,7 +95,7 @@ public class AccountServiceImpl implements AccountService{
             if(account.getAccountType().equals(AccountType.SAVINGS)){
                 isBalanceDeduct = accountBalanceService.debitBalanceFromAccount(account , creditBalance.getBalance());
                 accountBalance.setBalance(account.getBalance());
-                transaction=Transaction.builder().fromUser(account.getCustomer()).debitSuccess(isBalanceDeduct).bankName(bankName).build();
+                transaction=Transaction.builder().amount(creditBalance.getBalance()).fromUser(account.getCustomer()).debitSuccess(isBalanceDeduct).bankName(bankName).transactionType(TransactionType.INTERNAL_TRANSFER).build();
             }else{
                 if(isBalanceDeduct) {
                     isBalanceCredit  = accountBalanceService.creditBalanceToAccount(account, creditBalance.getBalance());
@@ -113,7 +123,7 @@ public class AccountServiceImpl implements AccountService{
         Transaction transaction= null;
         if(debtorsAccount.isPresent()){
             debtorAccount = debtorsAccount.get();
-            transaction = Transaction.builder().fromUser(debtorAccount.getCustomer()).bankName(bankName).build();
+            transaction = Transaction.builder().amount(transferAmount.getAmount()).fromUser(debtorAccount.getCustomer()).bankName(bankName).transactionType(TransactionType.TRANSFER).build();
             if(debtorAccount.getBalance() >= (transferAmount.getAmount() + ((transferAmount.getAmount() * interestRate)/100))){
                 boolean isBalanceDeduct = accountBalanceService.debitBalanceFromAccount(debtorAccount , transferAmount.getAmount() + ((transferAmount.getAmount() * interestRate)/100));
                 transaction.setDebitSuccess(true);

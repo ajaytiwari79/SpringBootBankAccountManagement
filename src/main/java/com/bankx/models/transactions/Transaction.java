@@ -15,9 +15,10 @@ import javax.persistence.ManyToOne;
 @Entity
 @Builder
 public class Transaction extends BaseEntity {
-//    private TransactionType transactionType;
+    private TransactionType transactionType;
     private boolean debitSuccess;
     private boolean creditSuccess;
+    private double amount;
     private boolean enables;
     @ManyToOne
     @JoinColumn(name = "fromUser")

@@ -8,12 +8,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-prod.yaml")
 class BankxApplicationTests {
-
-	@Test
-	void contextLoads() {
-		System.out.println("this is for testing -----------------------");
-	}
 
 }

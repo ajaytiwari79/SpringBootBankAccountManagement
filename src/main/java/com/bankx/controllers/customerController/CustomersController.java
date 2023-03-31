@@ -1,5 +1,6 @@
 package com.bankx.controllers.customerController;
 
+import com.bankx.dtos.customerDtos.CustomerDTO;
 import com.bankx.models.customer.Customer;
 import com.bankx.services.customerService.CustomerService;
 import com.bankx.services.customerService.CustomerServiceImpl;
@@ -20,7 +21,7 @@ public class CustomersController {
     private CustomerService customerService;
 
     @PostMapping("/add_new_customer")
-    public ResponseEntity<Object> addNewCustomer(@RequestBody Customer customer){
-        return ResponseHandler.generateResponse(HttpStatus.OK , true , customerService.addNewCustomer(customer));
+    public ResponseEntity<Object> addNewCustomer(@RequestBody CustomerDTO customerDTO){
+        return ResponseHandler.generateResponse(HttpStatus.OK , true , customerService.addNewCustomer(customerDTO));
     }
 }

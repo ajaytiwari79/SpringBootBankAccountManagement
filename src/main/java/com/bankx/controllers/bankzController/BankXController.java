@@ -35,7 +35,7 @@ public class BankXController {
         return ResponseHandler.generateResponse(HttpStatus.OK ,true , accountService.getBalance(creditBalance , Constants.BANKZ));
     }
 
-    @PostMapping("/reconsilation")
+    @PutMapping("/reconciliation")
     public ResponseEntity<Object> matchAllTransactionsByBankZ(@RequestBody List<Transaction> transactions ){
         return ResponseHandler.generateResponse(HttpStatus.OK ,true , transactionService.matchAllTransactionsByBankZ(transactions , Constants.BANKZ));
     }

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TransactionService {
 
-    void createTransaction(Transaction build);
+    Transaction createTransaction(Transaction build);
 
     Object matchAllTransactionsByBankZ(List<Transaction> transactions, String bankz);
 }

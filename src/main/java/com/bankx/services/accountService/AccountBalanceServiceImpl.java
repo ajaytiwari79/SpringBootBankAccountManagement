@@ -1,13 +1,10 @@
 package com.bankx.services.accountService;
 
 import com.bankx.models.account.Account;
-import com.bankx.models.account.AccountType;
 import com.bankx.models.exception.NotValidException;
 import com.bankx.repositories.accountRepositry.AccountRepository;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -23,7 +20,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService{
             account.setBalance(getTwoPlaceDecimalValue(account.getBalance() - balance));
             isBalanceDebit = true;
         }else{
-            throw new NotValidException("Savings Account does not have enough balance to transfer");
+            throw new NotValidException("Current Account does not have enough balance to transfer");
         }
         accountRepository.save(account);
         return isBalanceDebit;

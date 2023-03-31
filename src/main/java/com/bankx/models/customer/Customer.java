@@ -3,10 +3,7 @@ package com.bankx.models.customer;
 import com.bankx.models.account.Account;
 import com.bankx.models.transactions.Transaction;
 import com.bankx.utility.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -20,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Customer extends BaseEntity {
     private String username;
     private String email;

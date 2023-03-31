@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -22,9 +23,9 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @CreatedDate
-    private Date createdAt;
+    private LocalDate createdAt;
     @LastModifiedBy
-    private Date updatedAt;
+    private LocalDate updatedAt;
     private boolean deleted;
 
     public BaseEntity(int id, boolean deleted) {

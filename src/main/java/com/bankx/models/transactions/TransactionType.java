@@ -1,5 +1,5 @@
 package com.bankx.models.transactions;
 
 public enum TransactionType {
-    DEBIT,CREDIT
+    DEBIT,CREDIT,INTERNAL_TRANSFER,TRANSFER
 }
