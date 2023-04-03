@@ -17,4 +17,4 @@ com.bankx.repositories.transactionsRepository
 com.bankx.services.accountService
 com.bankx.services.customerService
 com.bankx.services.transactionService
-com.bankx.utility
+com.bankx.utilities
