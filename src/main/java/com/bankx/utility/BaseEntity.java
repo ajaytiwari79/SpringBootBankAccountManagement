@@ -7,10 +7,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -27,7 +25,8 @@ public class BaseEntity {
     @LastModifiedBy
     private LocalDate updatedAt;
     private boolean deleted;
-
+    @org.springframework.data.annotation.Version
+    private Long version;
     public BaseEntity(int id, boolean deleted) {
         this.id=id;
         this.deleted = deleted;

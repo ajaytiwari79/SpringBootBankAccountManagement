@@ -1,6 +1,4 @@
-package com.bankx.models.exception;
-
-import org.springframework.stereotype.Service;
+package com.bankx.entites.exception;
 
 public class NotValidException extends RuntimeException{
     private String msg;

@@ -1,7 +1,7 @@
 package com.bankx.services.accountService;
 
-import com.bankx.models.account.Account;
-import com.bankx.models.exception.NotValidException;
+import com.bankx.entites.account.Account;
+import com.bankx.entites.exception.NotValidException;
 import com.bankx.repositories.accountRepositry.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,24 +14,30 @@ public class AccountBalanceServiceImpl implements AccountBalanceService{
     @Autowired
     private AccountRepository accountRepository;
 
-    public boolean debitBalanceFromAccount(Account account , double balance){
+    public AccountBalanceServiceImpl(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
+
+    public boolean debitAmountFromAccount(Account account , double amount){
         boolean isBalanceDebit = false;
-        if(account.getBalance() >= getTwoPlaceDecimalValue(balance)) {
-            account.setBalance(getTwoPlaceDecimalValue(account.getBalance() - balance));
-            isBalanceDebit = true;
+        if(account.getAmount() >= getTwoPlaceDecimalValue(amount)) {
+            account.setAmount(getTwoPlaceDecimalValue(account.getAmount() - amount));
         }else{
             throw new NotValidException("Current Account does not have enough balance to transfer");
         }
-        accountRepository.save(account);
+        Account account1 = accountRepository.save(account);
+        if(account1 !=null){
+            isBalanceDebit = true;
+        }
         return isBalanceDebit;
     }
 
-    public boolean creditBalanceToAccount(Account account, double balance){
+    public boolean creditAmountToAccount(Account account, double amount){
         boolean isBalanceCredit = false;
-        double amount = getTwoPlaceDecimalValue(account.getBalance() + balance);
-        account.setBalance(amount);
+        amount = getTwoPlaceDecimalValue(account.getAmount() + amount);
+        account.setAmount(amount);
         Account updatedAccount = accountRepository.save(account);
-        if(updatedAccount.getBalance() == amount){
+        if(updatedAccount.getAmount() == amount){
             isBalanceCredit=true;
         }
         return isBalanceCredit;

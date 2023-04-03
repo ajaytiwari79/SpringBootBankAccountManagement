@@ -1,6 +1,6 @@
 package com.bankx.repositories.notificationRepository;
 
-import com.bankx.models.notification.Notification;
+import com.bankx.entites.notification.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.bankx.dtos.accountDtos;
+package com.bankx.models.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,9 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransferAmount {
-    private int debtor_id;
+public class CreditTransferRequest {
+    private int debtorId;
     private double amount;
-    private int creditor_id;
+    private int creditorId;
+    private String bankName;
 }

@@ -1,6 +1,6 @@
-package com.bankx.dtos.accountDtos;
+package com.bankx.models.account;
 
-import com.bankx.models.account.AccountType;
+import com.bankx.entites.account.AccountType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,10 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AccountBalance {
     private AccountType accountType;
-    private double balance;
+    private double amount;
 
-    public AccountBalance(AccountType accountType, double balance) {
+    public AccountBalance(AccountType accountType, double amount) {
         this.accountType = accountType;
-        this.balance = balance;
+        this.amount = amount;
     }
+
 }

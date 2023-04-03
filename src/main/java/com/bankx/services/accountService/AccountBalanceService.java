@@ -1,13 +1,12 @@
 package com.bankx.services.accountService;
 
-import com.bankx.models.account.Account;
-import com.bankx.models.account.AccountType;
+import com.bankx.entites.account.Account;
 
 public interface AccountBalanceService {
 
-    boolean debitBalanceFromAccount(Account account, double debitBalance);
+    boolean debitAmountFromAccount(Account account, double debitBalance);
 
-    boolean creditBalanceToAccount(Account account, double balance);
+    boolean creditAmountToAccount(Account account, double balance);
 
     double getTwoPlaceDecimalValue(double amount);
 }

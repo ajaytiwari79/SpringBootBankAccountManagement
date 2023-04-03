@@ -1,6 +1,6 @@
 package com.bankx.repositories.customerRepository;
 
-import com.bankx.models.customer.Customer;
+import com.bankx.entites.customer.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

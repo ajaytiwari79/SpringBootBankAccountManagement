@@ -1,6 +1,6 @@
 package com.bankx.services.transactionService;
 
-import com.bankx.models.transactions.Transaction;
+import com.bankx.entites.transactions.Transaction;
 
 import java.util.List;
 

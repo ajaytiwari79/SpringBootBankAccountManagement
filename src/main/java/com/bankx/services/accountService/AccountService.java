@@ -1,23 +1,24 @@
 package com.bankx.services.accountService;
 
-import com.bankx.dtos.accountDtos.AccountBalance;
-import com.bankx.dtos.accountDtos.CreditBalance;
-import com.bankx.dtos.accountDtos.TransferAmount;
-import com.bankx.dtos.transactionsDtos.TransactionDTO;
-import com.bankx.models.account.Account;
-import com.bankx.models.customer.Customer;
-import com.bankx.models.transactions.Transaction;
+import com.bankx.entites.customer.Customer;
+import com.bankx.models.account.AccountBalance;
+import com.bankx.models.account.CreditTransferRequest;
+import com.bankx.models.account.DepositAmount;
+import com.bankx.models.account.WithdrawAmount;
+import com.bankx.entites.transactions.Transaction;
 
 import java.util.List;
 
 public interface AccountService {
-    List<AccountBalance> checkBalance(int c_id);
+    List<AccountBalance> checkAmount(int customerId);
 
-    TransactionDTO addBalanceToSavingsAccount(CreditBalance creditBalance, String bankName);
+    Transaction depositAmount(DepositAmount depositAmount);
 
-    List<AccountBalance> transferBalanceSavingsToCurrentAccount(CreditBalance creditBalance, String bankName);
+    List<AccountBalance> transferAmountSavingsToCurrentAccount(CreditTransferRequest transferAmount);
 
-    boolean transferAmountBWUsers(TransferAmount transferAmount,String bankName);
+    boolean transferAmountBWUsers(CreditTransferRequest transferAmount);
 
-    TransactionDTO getBalance(CreditBalance creditBalance, String bankz);
+    Transaction withdrawAmount(WithdrawAmount withdrawAmount);
+
+    void sendNotification(CreditTransferRequest transferAmount, Customer fromUser, Customer toUser);
 }

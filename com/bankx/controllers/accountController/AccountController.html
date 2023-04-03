@@ -124,16 +124,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.springframework.http.ResponseEntity&lt;<a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addBalanceToSavingsAccount(com.bankx.dtos.accountDtos.CreditBalance)" class="member-name-link">addBalanceToSavingsAccount</a><wbr>(<a href="../../dtos/accountDtos/CreditBalance.html" title="class in com.bankx.dtos.accountDtos">CreditBalance</a>&nbsp;creditBalance)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addBalanceToSavingsAccount(com.bankx.models.account.CreditBalance)" class="member-name-link">addBalanceToSavingsAccount</a><wbr>(<a href="../../dtos/accountDtos/CreditBalance.html" title="class in com.bankx.models.account">CreditBalance</a>&nbsp;creditBalance)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.springframework.http.ResponseEntity&lt;<a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getBalance(int)" class="member-name-link">getBalance</a><wbr>(int&nbsp;c_id)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.springframework.http.ResponseEntity&lt;<a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#transferAmountBWUsers(com.bankx.dtos.accountDtos.TransferAmount)" class="member-name-link">transferAmountBWUsers</a><wbr>(<a href="../../dtos/accountDtos/TransferAmount.html" title="class in com.bankx.dtos.accountDtos">TransferAmount</a>&nbsp;transferAmount)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#transferAmountBWUsers(com.bankx.models.account.TransferAmount)" class="member-name-link">transferAmountBWUsers</a><wbr>(<a href="../../dtos/accountDtos/TransferAmount.html" title="class in com.bankx.models.account">TransferAmount</a>&nbsp;transferAmount)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.springframework.http.ResponseEntity&lt;<a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#transferBalanceSavingsToCurrentAccount(com.bankx.dtos.accountDtos.CreditBalance)" class="member-name-link">transferBalanceSavingsToCurrentAccount</a><wbr>(<a href="../../dtos/accountDtos/CreditBalance.html" title="class in com.bankx.dtos.accountDtos">CreditBalance</a>&nbsp;creditBalance)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#transferBalanceSavingsToCurrentAccount(com.bankx.models.account.CreditBalance)" class="member-name-link">transferBalanceSavingsToCurrentAccount</a><wbr>(<a href="../../dtos/accountDtos/CreditBalance.html" title="class in com.bankx.models.account">CreditBalance</a>&nbsp;creditBalance)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -175,27 +175,27 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="addBalanceToSavingsAccount(com.bankx.dtos.accountDtos.CreditBalance)">
+<section class="detail" id="addBalanceToSavingsAccount(com.bankx.models.account.CreditBalance)">
 <h3>addBalanceToSavingsAccount</h3>
 <div class="member-signature"><span class="annotations">@PutMapping("/add_balance_to_savings_account")
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.springframework.http.ResponseEntity&lt;<a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="element-name">addBalanceToSavingsAccount</span><wbr><span class="parameters">(@RequestBody
- <a href="../../dtos/accountDtos/CreditBalance.html" title="class in com.bankx.dtos.accountDtos">CreditBalance</a>&nbsp;creditBalance)</span></div>
+ <a href="../../dtos/accountDtos/CreditBalance.html" title="class in com.bankx.models.account">CreditBalance</a>&nbsp;creditBalance)</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="transferBalanceSavingsToCurrentAccount(com.bankx.dtos.accountDtos.CreditBalance)">
+<section class="detail" id="transferBalanceSavingsToCurrentAccount(com.bankx.models.account.CreditBalance)">
 <h3>transferBalanceSavingsToCurrentAccount</h3>
 <div class="member-signature"><span class="annotations">@PutMapping("/transfer_balance_savings_to_current_account")
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.springframework.http.ResponseEntity&lt;<a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="element-name">transferBalanceSavingsToCurrentAccount</span><wbr><span class="parameters">(@RequestBody
- <a href="../../dtos/accountDtos/CreditBalance.html" title="class in com.bankx.dtos.accountDtos">CreditBalance</a>&nbsp;creditBalance)</span></div>
+ <a href="../../dtos/accountDtos/CreditBalance.html" title="class in com.bankx.models.account">CreditBalance</a>&nbsp;creditBalance)</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="transferAmountBWUsers(com.bankx.dtos.accountDtos.TransferAmount)">
+<section class="detail" id="transferAmountBWUsers(com.bankx.models.account.TransferAmount)">
 <h3>transferAmountBWUsers</h3>
 <div class="member-signature"><span class="annotations">@PutMapping("/transfer_amount_bw_users")
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.springframework.http.ResponseEntity&lt;<a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="element-name">transferAmountBWUsers</span><wbr><span class="parameters">(@RequestBody
- <a href="../../dtos/accountDtos/TransferAmount.html" title="class in com.bankx.dtos.accountDtos">TransferAmount</a>&nbsp;transferAmount)</span></div>
+ <a href="../../dtos/accountDtos/TransferAmount.html" title="class in com.bankx.models.account">TransferAmount</a>&nbsp;transferAmount)</span></div>
 </section>
 </li>
 </ul>

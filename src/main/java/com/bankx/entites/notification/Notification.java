@@ -1,7 +1,7 @@
-package com.bankx.models.notification;
+package com.bankx.entites.notification;
 
-import com.bankx.models.customer.Customer;
-import com.bankx.models.transactions.TransactionType;
+import com.bankx.entites.customer.Customer;
+import com.bankx.entites.transactions.TransactionType;
 import com.bankx.utility.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

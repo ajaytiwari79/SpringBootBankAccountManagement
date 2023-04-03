@@ -1,14 +1,16 @@
-package com.bankx.models.customer;
+package com.bankx.entites.customer;
 
-import com.bankx.models.account.Account;
-import com.bankx.models.transactions.Transaction;
+import com.bankx.entites.account.Account;
+import com.bankx.entites.transactions.Transaction;
 import com.bankx.utility.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,12 +31,19 @@ public class Customer extends BaseEntity {
     private String uniqueId;
     private String state;
     private String pinCode;
+    @ApiModelProperty(hidden = true)
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "c_id", referencedColumnName = "id")
-    private List<Account> accounts;
+    @JoinColumn(name = "customerId", referencedColumnName = "id")
+    private List<Account> accounts= new ArrayList<>();
+    @ApiModelProperty(hidden = true)
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "c_id", referencedColumnName = "id")
+    @JoinColumn(name = "customerId", referencedColumnName = "id")
     private List<Transaction> transactions;
+
+    public boolean addAccount(Account account){
+        this.accounts.add(account);
+        return false;
+    }
 
     public Customer(int id, boolean deleted, String username, String email, Date dob, String contactNo, String street, String city, String uniqueId, String state, String pinCode) {
         super(id, deleted);

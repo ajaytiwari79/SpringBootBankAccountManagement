@@ -1,16 +1,16 @@
 package com.bankx.services.accountService;
 
-import com.bankx.dtos.accountDtos.AccountBalance;
-import com.bankx.dtos.accountDtos.CreditBalance;
-import com.bankx.dtos.accountDtos.TransferAmount;
-import com.bankx.dtos.transactionsDtos.TransactionDTO;
-import com.bankx.models.account.Account;
-import com.bankx.models.account.AccountType;
-import com.bankx.models.customer.Customer;
-import com.bankx.models.exception.NotValidException;
-import com.bankx.models.notification.Notification;
-import com.bankx.models.transactions.Transaction;
-import com.bankx.models.transactions.TransactionType;
+import com.bankx.models.account.AccountBalance;
+import com.bankx.models.account.CreditTransferRequest;
+import com.bankx.models.account.DepositAmount;
+import com.bankx.models.account.WithdrawAmount;
+import com.bankx.entites.account.Account;
+import com.bankx.entites.account.AccountType;
+import com.bankx.entites.customer.Customer;
+import com.bankx.entites.exception.NotValidException;
+import com.bankx.entites.notification.Notification;
+import com.bankx.entites.transactions.Transaction;
+import com.bankx.entites.transactions.TransactionType;
 import com.bankx.repositories.accountRepositry.AccountRepository;
 import com.bankx.repositories.notificationRepository.NotificationRepository;
 import com.bankx.repositories.transactionsRepository.TransactionRepository;
@@ -20,8 +20,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,84 +49,93 @@ public class AccountServiceImpl implements AccountService {
     @Value("${interestRate}")
     private double interestRate;
 
-    public AccountServiceImpl(AccountRepository accountRepository, AccountBalanceService accountBalanceService) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountBalanceService accountBalanceService, TransactionService transactionService, TransactionRepository transactionRepository, NotificationRepository notificationRepository) {
         this.accountRepository = accountRepository;
         this.accountBalanceService = accountBalanceService;
+        this.transactionService=transactionService;
+        this.transactionRepository=transactionRepository;
+        this.notificationRepository=notificationRepository;
     }
 
-    public List<AccountBalance> checkBalance(int c_id) {
-        List<AccountBalance> checkBalanceList = accountRepository.getAccountBalance(c_id, true);
+    public List<AccountBalance> checkAmount(int customerId) {
+        List<AccountBalance> checkBalanceList = accountRepository.getAccountBalance(customerId, true);
         return checkBalanceList;
     }
 
-    public TransactionDTO addBalanceToSavingsAccount(CreditBalance creditBalance, String bankName) {
-        Account account = accountRepository.getSavingsAccountBalanceByUser(creditBalance.getC_id(), true, AccountType.SAVINGS);
-        double currentBalance = account.getBalance() + creditBalance.getBalance();
-        double interest = (currentBalance * interestRate) / 100;
-        boolean isBalanceCredit = accountBalanceService.creditBalanceToAccount(account, (creditBalance.getBalance() + interest));
-        TransactionDTO transactionDTO = null;
+    @Transactional
+    public Transaction depositAmount(DepositAmount depositAmount) {
+        Account account = accountRepository.getSavingsAccountByUser(depositAmount.getCustomerId(), true, depositAmount.getAccountType());
+        double currentAmount = account.getAmount() + depositAmount.getAmount();
+        double interest = (currentAmount * interestRate) / 100;
+        boolean isBalanceCredit = accountBalanceService.creditAmountToAccount(account, (depositAmount.getAmount() + interest));
+        Transaction transaction=null;
         if (isBalanceCredit) {
-            Transaction transaction = transactionService.createTransaction(Transaction.builder().amount(creditBalance.getBalance()).toUser(account.getCustomer()).creditSuccess(true).bankName(bankName).transactionType(TransactionType.DEBIT).build());
-            transactionDTO = TransactionDTO.builder().amount(transaction.getAmount()).creditSuccess(transaction.isCreditSuccess()).debitSuccess(transaction.isDebitSuccess()).transactionType(transaction.getTransactionType()).toUser(transaction.getToUser().getUsername()).build();
+            transaction = transactionService.createTransaction(Transaction.builder().amount(depositAmount.getAmount()).fromUser(account.getCustomer()).creditSuccess(true).bankName(depositAmount.getBankName()).transactionType(TransactionType.CREDIT).build());
+            transaction.setCreditAmountFromUser(account.getCustomer().getUsername());
+            transaction.setDebitAmountFromUser(account.getCustomer().getUsername());
         }
-        return transactionDTO;
-    }
-
-    public TransactionDTO getBalance(CreditBalance creditBalance, String bankName) {
-        Account account = accountRepository.getSavingsAccountBalanceByUser(creditBalance.getC_id(), true, AccountType.CURRENT);
-        double balance = creditBalance.getBalance() + (creditBalance.getBalance() * interestRate) * .001;
-        boolean isBalanceDebit = accountBalanceService.debitBalanceFromAccount(account, balance);
-        TransactionDTO transactionDTO=null;
-        if (isBalanceDebit) {
-            Transaction transaction = transactionService.createTransaction(Transaction.builder().amount(creditBalance.getBalance()).toUser(account.getCustomer()).creditSuccess(true).bankName(bankName).transactionType(TransactionType.CREDIT).build());
-            transactionDTO = TransactionDTO.builder().amount(transaction.getAmount()).creditSuccess(transaction.isCreditSuccess()).debitSuccess(transaction.isDebitSuccess()).transactionType(transaction.getTransactionType()).toUser(transaction.getToUser().getUsername()).build();
-        }
-        return transactionDTO;
+        return transaction;
     }
 
     @Transactional
-    public List<AccountBalance> transferBalanceSavingsToCurrentAccount(CreditBalance creditBalance , String bankName) {
-        List<Account> accounts =  accountRepository.getAccountsByCustomerId(creditBalance.getC_id(),true);
+    public Transaction withdrawAmount(WithdrawAmount withdrawAmount) {
+        Account account = accountRepository.getSavingsAccountByUser(withdrawAmount.getCustomerId(), true, withdrawAmount.getAccountType());
+        double amount = withdrawAmount.getAmount()+ (withdrawAmount.getAmount() * interestRate) * .001;
+        boolean isBalanceDebit = accountBalanceService.debitAmountFromAccount(account, amount);
+        Transaction transaction = null;
+        if (isBalanceDebit) {
+            transaction = transactionService.createTransaction(Transaction.builder().amount(withdrawAmount.getAmount()).fromUser(account.getCustomer()).creditSuccess(true).bankName(withdrawAmount.getBankName()).transactionType(TransactionType.DEBIT).build());
+            transaction.setCreditAmountFromUser(account.getCustomer().getUsername());
+            transaction.setDebitAmountFromUser(account.getCustomer().getUsername());
+        }
+        return transaction;
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<AccountBalance> transferAmountSavingsToCurrentAccount(CreditTransferRequest transferAmount) {
         List<AccountBalance> accountBalanceList = new ArrayList<>();
-        boolean isBalanceDeduct = false , isBalanceCredit = false;
-        Transaction transaction=null;
-        for(Account account : accounts){
-            AccountBalance accountBalance =  new AccountBalance();
-            accountBalance.setAccountType(account.getAccountType());
-            if(account.getAccountType().equals(AccountType.SAVINGS)){
-                isBalanceDeduct = accountBalanceService.debitBalanceFromAccount(account , creditBalance.getBalance());
-                accountBalance.setBalance(account.getBalance());
-                transaction=Transaction.builder().amount(creditBalance.getBalance()).fromUser(account.getCustomer()).debitSuccess(isBalanceDeduct).bankName(bankName).transactionType(TransactionType.INTERNAL_TRANSFER).build();
-            }else{
-                if(isBalanceDeduct) {
-                    isBalanceCredit  = accountBalanceService.creditBalanceToAccount(account, creditBalance.getBalance());
-                    accountBalance.setBalance(account.getBalance());
-                    transaction.setToUser(account.getCustomer());
-                    transaction.setCreditSuccess(isBalanceCredit);
+        if(transferAmount.getDebtorId() == transferAmount.getCreditorId()) {
+            List<Account> accounts = accountRepository.getAccountsByCustomerId(transferAmount.getCreditorId(), true);
+            boolean isBalanceDeduct = false, isBalanceCredit = false;
+            Transaction transaction = null;
+            for (Account account : accounts) {
+                AccountBalance accountBalance = new AccountBalance();
+                accountBalance.setAccountType(account.getAccountType());
+                if (account.getAccountType().equals(AccountType.SAVINGS)) {
+                    isBalanceDeduct = accountBalanceService.debitAmountFromAccount(account,transferAmount.getAmount());
+                    accountBalance.setAmount(account.getAmount());
+                    transaction = Transaction.builder().amount(transferAmount.getAmount()).fromUser(account.getCustomer()).debitSuccess(isBalanceDeduct).bankName(transferAmount.getBankName()).transactionType(TransactionType.INTERNAL_TRANSFER).build();
+                } else {
+                    if (isBalanceDeduct) {
+                        isBalanceCredit = accountBalanceService.creditAmountToAccount(account, transferAmount.getAmount());
+                        accountBalance.setAmount(account.getAmount());
+                        transaction.setToUser(account.getCustomer());
+                        transaction.setCreditSuccess(isBalanceCredit);
+                    }
                 }
+                transactionService.createTransaction(transaction);
+                accountBalanceList.add(accountBalance);
             }
-            transactionService.createTransaction(transaction);
-            accountBalanceList.add(accountBalance);
         }
         return accountBalanceList;
     }
 
     @Transactional
-    public boolean transferAmountBWUsers(TransferAmount transferAmount, String bankName) {
+    public boolean transferAmountBWUsers(CreditTransferRequest transferAmount) {
         List<Integer> ids = new ArrayList<>();
         List<Account> accountList = new ArrayList<>();
-        ids.add(transferAmount.getCreditor_id());
-        ids.add(transferAmount.getDebtor_id());
+        ids.add(transferAmount.getCreditorId());
+        ids.add(transferAmount.getDebtorId());
         List<Account> accounts =  accountRepository.getAccountByIds(ids , true);
-        Optional<Account> debtorsAccount = accounts.stream().filter(e-> e.getCustomer().getId() == transferAmount.getDebtor_id() && e.getAccountType().equals(AccountType.CURRENT)).findFirst();
-        Optional<Account> creditorsAccount = accounts.stream().filter(e-> e.getCustomer().getId() == transferAmount.getCreditor_id() && e.getAccountType().equals(AccountType.SAVINGS)).findFirst();
+        Optional<Account> debtorsAccount = accounts.stream().filter(e-> e.getCustomer().getId() == transferAmount.getDebtorId() && e.getAccountType().equals(AccountType.CURRENT)).findFirst();
+        Optional<Account> creditorsAccount = accounts.stream().filter(e-> e.getCustomer().getId() == transferAmount.getCreditorId() && e.getAccountType().equals(AccountType.SAVINGS)).findFirst();
         Account  debtorAccount=null , creditorAccount= null;
         Transaction transaction= null;
         if(debtorsAccount.isPresent()){
             debtorAccount = debtorsAccount.get();
-            transaction = Transaction.builder().amount(transferAmount.getAmount()).fromUser(debtorAccount.getCustomer()).bankName(bankName).transactionType(TransactionType.TRANSFER).build();
-            if(debtorAccount.getBalance() >= (transferAmount.getAmount() + ((transferAmount.getAmount() * interestRate)/100))){
-                boolean isBalanceDeduct = accountBalanceService.debitBalanceFromAccount(debtorAccount , transferAmount.getAmount() + ((transferAmount.getAmount() * interestRate)/100));
+            transaction = Transaction.builder().amount(transferAmount.getAmount()).fromUser(debtorAccount.getCustomer()).bankName(transferAmount.getBankName()).transactionType(TransactionType.TRANSFER).build();
+            if(debtorAccount.getAmount() >= (transferAmount.getAmount() + ((transferAmount.getAmount() * interestRate)/100))){
+                boolean isBalanceDeduct = accountBalanceService.debitAmountFromAccount(debtorAccount , transferAmount.getAmount() + ((transferAmount.getAmount() * interestRate)/100));
                 transaction.setDebitSuccess(true);
                 transaction.setEnables(true);
             }
@@ -142,7 +152,7 @@ public class AccountServiceImpl implements AccountService {
             creditorAccount = creditorsAccount.get();
             transaction.setCreditSuccess(true);
             transaction.setToUser(creditorAccount.getCustomer());
-            accountBalanceService.creditBalanceToAccount(creditorAccount , transferAmount.getAmount() + ((creditorAccount.getBalance()+transferAmount.getAmount())*interestRate)/100);
+            accountBalanceService.creditAmountToAccount(creditorAccount , transferAmount.getAmount() + ((creditorAccount.getAmount()+transferAmount.getAmount())*interestRate)/100);
         }else{
             throw new NotValidException("Creditors Account not found");
         }
@@ -151,7 +161,7 @@ public class AccountServiceImpl implements AccountService {
         return true;
     }
 
-    private void sendNotification(TransferAmount transferAmount, Customer fromUser, Customer toUser) {
+    public void sendNotification(CreditTransferRequest transferAmount, Customer fromUser, Customer toUser) {
         ArrayList<Notification> notifications = new ArrayList<>();
         Notification debtorNotification = new Notification(),creditorNotification = new Notification();
         debtorNotification.setCustomer(fromUser);

@@ -4,12 +4,12 @@ com.bankx.controllers.accountController
 com.bankx.controllers.bankzController
 com.bankx.controllers.customerController
 com.bankx.controllers.exceptionController
-com.bankx.dtos.accountDtos
 com.bankx.models.account
-com.bankx.models.customer
-com.bankx.models.exception
-com.bankx.models.notification
-com.bankx.models.transactions
+com.bankx.entites.account
+com.bankx.entites.customer
+com.bankx.entites.exception
+com.bankx.entites.notification
+com.bankx.entites.transactions
 com.bankx.repositories.accountRepositry
 com.bankx.repositories.customerRepository
 com.bankx.repositories.notificationRepository

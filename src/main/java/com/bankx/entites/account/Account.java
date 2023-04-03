@@ -1,10 +1,9 @@
-package com.bankx.models.account;
+package com.bankx.entites.account;
 
-import com.bankx.models.customer.Customer;
+import com.bankx.entites.customer.Customer;
 import com.bankx.utility.BaseEntity;
 import lombok.*;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,9 +17,9 @@ import javax.persistence.ManyToOne;
 @ToString
 public class Account extends BaseEntity {
     private AccountType accountType;
-    private double balance;
+    private double amount;
     private boolean accountStatus;
     @ManyToOne
-    @JoinColumn(name = "c_id")
+    @JoinColumn(name = "customerId")
     private Customer customer;
 }

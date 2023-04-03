@@ -1,6 +1,6 @@
-package com.bankx.dtos.accountDtos;
+package com.bankx.models.account;
 
-import com.bankx.models.transactions.Transaction;
+import com.bankx.entites.transactions.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

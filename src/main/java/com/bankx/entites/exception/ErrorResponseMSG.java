@@ -1,4 +1,4 @@
-package com.bankx.models.exception;
+package com.bankx.entites.exception;
 
 import org.springframework.http.HttpStatus;
 
