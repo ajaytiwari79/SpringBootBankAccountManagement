@@ -1,8 +1,8 @@
 #---------ApplicationPortNo
 server:
   port: 7979
-  servlet:
-    context-path: /bankx
+  #servlet:
+   # context-path: /bankx
 #---------ApplicationName
 spring:
   application:

@@ -12,7 +12,8 @@ import java.util.List;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer>{
 
-    @Query("select new com.bankx.models.AccountBalance(account.accountType , account.amount) from Account account where account.customer.id =?1 and accountStatus=?2")
+    @Query("select new com.bankx.models.AccountBalance(account.accountType , account.amount) from Account account" +
+            " where account.customer.id =?1 and accountStatus=?2")
     List<AccountBalance> getAccountBalance(int customerId , boolean status);
 
     @Query("select account from Account account where account.customer.id =?1 and accountStatus=?2 and accountType = ?3")

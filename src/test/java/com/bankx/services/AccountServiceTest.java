@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +43,7 @@ class AccountServiceTest {
     @Value("${interestRate}")
     private double interestRate;
 
-    @Mock
+    @Autowired
     private AccountService accountService;
 
     @Mock
@@ -55,7 +56,7 @@ class AccountServiceTest {
 
 
     @Test
-    void savingAccount(){
+    void TestSavingAccount(){
         DepositAmountRequest depositAmount = new DepositAmountRequest(1, 100, AccountType.SAVINGS, "BankX");
         Customer customer = Customer.builder().username("test").dob(new Date()).state("UP").city("Muzaffarnagar").email("abhi@gmail.com").build();
         customer.setId(1);
